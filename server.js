@@ -1,7 +1,7 @@
 let http = require('http');
 let url = require('url');
 let path = require('path');
-let routes = require('./routes');
+let routes = require('./app/routes/routes');
 
 class Server{
 
@@ -28,12 +28,12 @@ class Server{
                     let handler = self.getHandler(route);
                     handler[route.action](req, resp);
                 } catch (e){
-                    console.log(e.message);
+                    console.log(e);
                     resp.writeHead(500);
-                    resp.end('LOL');
+                    resp.end('LOL, 500' + process.env.NODE_ENV);
                 }
             }
-            resp.end();
+           // resp.end();
 
         }).listen(port);
     }

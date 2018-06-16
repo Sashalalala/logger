@@ -18,5 +18,8 @@
   "homepage": "https://github.com/Sashalalala/logger#readme",
   "devDependencies": {
     "nodemon": "^1.17.5"
+  },
+  "dependencies": {
+    "mysql": "^2.15.0"
   }
 }
