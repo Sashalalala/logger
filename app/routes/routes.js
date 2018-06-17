@@ -1,7 +1,7 @@
 
 let Routes = {
     routes: {
-        '/':{
+        '/auth':{
             handler:'root',
             action:'auth'
         },

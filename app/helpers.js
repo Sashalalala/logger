@@ -1,3 +1,4 @@
+let config = require('../config');
 let helpers = {
 
     parsePostData: function (data) {
@@ -48,17 +49,40 @@ let helpers = {
         resp.statusMessage = message || 'Internal server error';
         resp.end()
     },
+    getErorrData : function (error_type){
+        return require('./errors')[error_type];
+    },
 
-    returnErorr : function (resp, code, errorData){
-        resp.writeHead(code);
-        let errors;
-        if(typeof errorData === 'string') {
-            errors = require('./errors')[errorData];
+    responceFormat: function (statusCode, data, resp) {
+        let responce = {};
+        responce.success = (statusCode>=200 && statusCode<300);
+        responce.data = data;
+        try{
+            if(resp){
+                resp.writeHead(statusCode);
+            }
+            return JSON.stringify(responce);
+        } catch (e){
+            if(resp){
+                resp.writeHead(500);
+                resp.statusMessage = 'Internal server error'
+            }
+            console.log('Response formatter: ', e);
+            return '';
         }
-        resp.end(JSON.stringify({
-            status : false,
-            error : errors || errorData
-        }));
+    },
+
+    generateToken : function () {
+        let crypto = require('crypto');
+        let str = crypto.randomBytes(32).toString('hex') + Date.now().toString();
+        return str;
+
+    },
+    isTokenValid : function (expiredAt) {
+        return Math.floor(Date.now()/1000) <= expiredAt;
+    },
+    getExpiredAt: function () {
+        return Math.floor(Date.now()/100) + config.token_expired;
     }
 };
 

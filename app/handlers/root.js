@@ -1,38 +1,50 @@
-let repository = require('../repo/repository');
+let Repository = require('../repo/repository');
 let helpers = require('../helpers');
 let root = {
-    auth : function (req, resp) {
+    auth: function (req, resp) {
 
-        if(req.method !=='POST'){
+        if (req.method !== 'POST') {
             resp.writeHead('400');
             resp.statusMessage = 'Bad request';
             resp.end();
         } else {
-            let userRepo = new repository('users');
             helpers.postData(req)
-                .then( data => {
+                .then(data => {
                     let userData = helpers.parsePostData(data);
-                    if(!userData){
-                        helpers.set400(resp,'unsupported data format');
+                    if (!userData) {
+                        return helpers.set400(resp, 'Bad request');
                     }
                     let login = userData.login;
                     let pass = userData.pass;
 
-                    if(!login || !pass){
+                    if (!login || !pass) {
                         return helpers.set400(resp);
                     }
                     return {
                         login: login,
-                        pass : pass
+                        pass: pass
                     }
                 })
                 .then(userData => {
-                    let userRepo = new repository('users');
+                    let userRepo = new Repository('users');
                     return userRepo.getUser(userData.login, userData.pass);
                 })
-                .then(userId=>{
-                    if(!userId) return helpers.returnErorr(resp, 400, 'userNotFound')
-                    return resp.end(userId.toString());
+                .then(user => {
+                    if (!user) {
+                        let response = helpers.responceFormat(400,helpers.getErorrData('invalid_user_data'),resp);
+                        return resp.end(response);
+                    }
+                    let tokenRepo = new Repository('tokens');
+                    return tokenRepo.getToken(user.id);
+                }, err => {
+                    console.log(err);
+                    return resp.end();
+                })
+                .then(result=>{
+                    resp.end(JSON.stringify(result));
+                }, err=> {
+                    console.log(err);
+                   return helpers.set400(resp);
                 });
         }
     }

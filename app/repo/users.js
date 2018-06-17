@@ -15,12 +15,10 @@ function users(conn) {
 
     this.getUser = function(login, pass){
         let conn = this.conn;
-
         return new Promise(function (resolve, reject) {
-            let query = 'SELECT id from users WHERE users.login = ? AND users.pass = ?';
+            let query = 'SELECT id, login from users WHERE users.login = ? AND users.pass = ?';
             conn.query(query,[login,pass], function (err, result, field) {
-                console.log(result);
-                if(result.length) resolve(result[0].id); else resolve(false);
+                if(result.length) resolve(result[0]); else resolve(false);
                 if(err){
                     reject(err);
                 }
