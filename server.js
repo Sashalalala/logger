@@ -1,6 +1,5 @@
 let http = require('http');
 let url = require('url');
-let path = require('path');
 let routes = require('./app/routes/routes');
 
 class Server{
@@ -18,6 +17,10 @@ class Server{
         let self = this;
 
         http.createServer(function (req, resp) {
+            resp.setHeader('Access-Control-Allow-Origin', '*');
+            resp.setHeader('Access-Control-Allow-Methods', 'GET, POST');
+            resp.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type, Authorization');
+
             let path = url.parse(req.url).pathname;
             let route = routes.find(path);
             if(!route) {
@@ -33,8 +36,6 @@ class Server{
                     resp.end('LOL, 500' + process.env.NODE_ENV);
                 }
             }
-           // resp.end();
-
         }).listen(port);
     }
 
