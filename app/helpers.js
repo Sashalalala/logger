@@ -83,6 +83,27 @@ let helpers = {
     },
     getExpiredAt: function () {
         return Math.floor(Date.now()/100) + config.token_expired;
+    },
+
+    generateFileName: function () {
+        let crypto = require('crypto');
+        return Math.floor(Date.now()/1000).toString(16) + '-' + crypto.randomBytes(4).toString('hex')+'.log';
+    },
+
+    createLogFile: function (data, userId) {
+        let self = this;
+        let fs = require('fs');
+        return new Promise(function (resolve, reject){
+            let filename = './' + config.log_dir + '/' + self.generateFileName();
+            fs.writeFile(filename, data, function (err) {
+                if(err){
+                    reject(err);
+                } else {
+                    resolve({userId : userId, path:filename});
+                }
+            })
+        });
+
     }
 };
 

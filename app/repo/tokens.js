@@ -80,6 +80,25 @@ function tokensRepo(conn) {
             });
         });
     };
+
+    this.check = function (token) {
+        let conn = this.conn;
+        return new Promise(function (resolve, reject) {
+            let query = 'SELECT user_id as userId, token, expired FROM user_tokens where token=?';
+            conn.query(query,[token], function (err,result) {
+                if(err){
+                    reject(err);
+                }
+                if(result.length){
+                    if(helpers.isTokenValid(result[0].expired)){
+                        resolve({check:false, userId:result[0].userId})
+                    } else reject({check:false, userId:false});
+                } else reject({check:false, userId:false});
+            })
+
+        })
+
+    }
 }
 
 module.exports = tokensRepo;

@@ -11,7 +11,7 @@ let Routes = {
         },
         '/upload':{
             handler:'root',
-            action:'upload'
+            action:'postLogs'
         }
     },
     find :function(path){
