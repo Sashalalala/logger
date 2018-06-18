@@ -9,7 +9,7 @@ function tokensRepo(conn) {
         let self = this;
         let conn = this.conn;
         return new Promise(function (resolve, reject) {
-            let expired = helpers.getExpiredAt();
+            let expired = Math.floor(Date.now()/1000);
             let query = "SELECT token, expired from user_tokens WHERE user_id=? AND expired>?";
             conn.query(query, [userId, expired], function (err, result, field) {
                 if(err){

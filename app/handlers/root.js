@@ -41,7 +41,8 @@ let root = {
                     return resp.end();
                 })
                 .then(result=>{
-                    resp.end(JSON.stringify(result));
+                    let response = helpers.responceFormat(200, result, resp);
+                    resp.end(response);
                 }, err=> {
                     console.log(err);
                    return helpers.set400(resp);
